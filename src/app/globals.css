@@ -1,0 +1,386 @@
+:root {
+  color-scheme: light dark;
+  --ink: light-dark(#151821, #f1eff7);
+  --secondary: light-dark(#515b6b, #b8b3c6);
+  --muted: light-dark(#5d6676, #aaa4ba);
+  --accent: light-dark(#6554c0, #b4a5fa);
+  --accent-hover: light-dark(#5140ab, #c6b9ff);
+  --accent-content: light-dark(#fcfcfd, #20192f);
+  --accent-visual: light-dark(#8b7cff, #a595f1);
+  --accent-soft: light-dark(#f1eeff, #322a45);
+  --accent-text: light-dark(#4f3fa0, #ddd4ff);
+  --paper: light-dark(#fcfcfd, #221f2a);
+  --surface: light-dark(#f7f8fa, #17151d);
+  --surface-subtle: light-dark(#f1f3f7, #2b2636);
+  --surface-hover: light-dark(#eef0f5, #322c3e);
+  --line: light-dark(#e2e6ee, #3c3749);
+  --control: light-dark(#808a9a, #8e859a);
+  --success: light-dark(#167e5f, #72d4ab);
+  --radius: 12px;
+  --radius-control: 8px;
+  --card-shadow: 0 2px 8px light-dark(rgb(16 24 40 / 3%), rgb(0 0 0 / 14%));
+  --floating-shadow: 0 4px 16px light-dark(rgb(16 24 40 / 6%), rgb(0 0 0 / 28%));
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Impeccable focus rule: No external outlines, use inset borders/shadows */
+:focus {
+  outline: none;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+button {
+  -webkit-user-select: none;
+  user-select: none;
+  font: inherit;
+}
+
+.page-wrapper {
+  max-width: 980px;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 100dvh;
+  padding: 24px 32px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 40px;
+  width: 100%;
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 23px;
+  font-weight: 760;
+  letter-spacing: -1.1px;
+  line-height: 1;
+  color: var(--ink);
+  text-decoration: none;
+  user-select: none;
+  transition: opacity 0.15s ease;
+}
+
+.wordmark:hover,
+.wordmark:focus-visible {
+  opacity: 0.88;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.wordmark img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+}
+
+.wordmark .brand-dot {
+  color: var(--accent);
+}
+
+
+/* Center hero cleanly in viewport */
+.hero-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0;
+  width: 100%;
+}
+
+.hero {
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+}
+
+.pofi-image-wrap {
+  display: inline-block;
+  margin-bottom: 24px;
+}
+
+.pofi-img {
+  width: 120px;
+  height: 156px;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  display: block;
+  margin: 0 auto;
+}
+
+.brand-title {
+  font-size: 32px;
+  font-weight: 650;
+  letter-spacing: -0.8px;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.brand-slogan {
+  font-size: 15px;
+  color: var(--muted);
+  margin-top: 6px;
+  letter-spacing: -0.1px;
+}
+
+/* Install box */
+.install-card {
+  grid-area: 1 / 1;
+  align-content: center;
+  visibility: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  box-shadow: var(--card-shadow);
+  text-align: left;
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.install-card:hover {
+  border-color: var(--control);
+}
+
+.install-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+}
+
+.install-cmd {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--accent-text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  overflow-x: auto;
+  scrollbar-width: none;
+  user-select: all;
+}
+
+.install-cmd::-webkit-scrollbar {
+  display: none;
+}
+
+.copy-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface-subtle);
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s, transform 0.1s;
+  padding: 0;
+}
+
+.copy-btn:hover {
+  border-color: var(--control);
+  color: var(--ink);
+  background: var(--surface-hover);
+}
+
+.copy-btn:active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  transform: scale(0.96);
+}
+
+.copy-btn.copied {
+  border-color: var(--success);
+  color: var(--success);
+  background: var(--surface-subtle);
+}
+
+.hint-text {
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.hint-text a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--line);
+  transition: text-decoration-color 0.15s, color 0.15s;
+}
+
+.hint-text a:hover {
+  text-decoration-color: var(--accent);
+  color: var(--accent-hover);
+}
+
+/* Theme toggle button — frameless minimal icon */
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+  padding: 0;
+  box-shadow: none;
+}
+
+.theme-toggle-btn:hover {
+  color: var(--ink);
+  background: var(--surface-subtle);
+}
+
+.theme-toggle-btn:active {
+  color: var(--accent);
+}
+
+/* App-identical footer (contained in max-width) */
+.app-footer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--muted);
+  user-select: none;
+}
+
+.app-footer-left,
+.app-footer-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.app-footer-version {
+  font-variant-numeric: tabular-nums;
+}
+
+.app-footer-link {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 140ms ease;
+}
+
+.app-footer-link:hover,
+.app-footer-link:focus-visible {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.app-footer-dot {
+  opacity: 0.5;
+  font-size: 11px;
+  user-select: none;
+}
+
+/* Mobile optimizations */
+@media (max-width: 520px) {
+  .page-wrapper {
+    padding: 16px 20px 14px;
+  }
+  .hero-container {
+    padding: 20px 0;
+  }
+  .brand-title {
+    font-size: 26px;
+  }
+  .pofi-img {
+    width: 96px;
+    height: 125px;
+  }
+  .install-cmd {
+    font-size: 12px;
+  }
+  .app-footer {
+    font-size: 10.5px;
+    padding-top: 12px;
+  }
+}
+
+
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+.install-section { margin-top: 32px; }
+.install-tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--line); text-align: left; }
+.install-tab { padding: 12px 0; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--secondary); cursor: pointer; font-size: 14px; font-weight: 600; }
+.install-tab:hover { color: var(--ink); }
+.install-tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.install-card:focus-visible { box-shadow: inset 0 0 0 2px var(--accent); }
+
+.install-panels { display: grid; margin-top: 16px; }
+.install-card[aria-hidden="false"] { visibility: visible; }
