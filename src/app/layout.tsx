@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { content } from "@/content";
@@ -107,6 +108,18 @@ export default function RootLayout({
       </head>
       <body>
         <div className="page-wrapper">{children}</div>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-3YJTX7B799"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-3YJTX7B799');
+          `}
+        </Script>
       </body>
     </html>
   );
