@@ -58,7 +58,7 @@ assert_bundle() {
     if ! valid_version "$minimum" || ! valid_version "$actual"; then die 'macOS sürümü doğrulanamadı.'; return 1; fi
     if older "$actual" "$minimum"; then die "macOS $minimum veya üzeri gerekli."; return 1; fi
   fi
-  /usr/bin/codesign --verify --deep --strict "$bundle" || { die 'Uygulama imzası doğrulanamadı.'; return 1; }
+  /usr/bin/codesign --verify --deep --strict --verbose=3 "$bundle" || { die 'Uygulama imzası doğrulanamadı.'; return 1; }
 }
 
 assert_archive_paths() {
