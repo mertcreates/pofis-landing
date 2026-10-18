@@ -34,6 +34,12 @@ export const content = {
     creditLabel: "mertcreates.",
     creditUrl: "https://mertcreates.com",
   },
+  notFound: {
+    title: "Sayfa bulunamadı",
+    help: "Adresi kontrol et veya ana sayfaya dön.",
+    returnLabel: "Ana sayfaya dön",
+    pofiNote: "Ben de yanlış kapıyı açmışım.",
+  },
   theme: {
     switchToLight: "Açık temaya geç",
     switchToDark: "Koyu temaya geç",
