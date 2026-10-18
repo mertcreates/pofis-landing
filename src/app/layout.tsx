@@ -41,20 +41,11 @@ export const metadata: Metadata = {
     siteName: content.brand.name,
     locale: content.meta.locale,
     type: "website",
-    images: [
-      {
-        url: "/pofi-full.webp",
-        width: 512,
-        height: 666,
-        alt: `${content.brand.name} — ${content.brand.tagline}`,
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: content.meta.title,
     description: content.meta.description,
-    images: ["/pofi-full.webp"],
   },
   icons: {
     icon: [
