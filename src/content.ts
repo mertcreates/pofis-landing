@@ -1,6 +1,6 @@
 export const content = {
   meta: {
-    title: "Pofis — Mesaiye biraz Pofi.",
+    title: "Pofis — Mesaiye biraz Pofi",
     description: "Kişisel mesai takibi. Mesaiye biraz Pofi.",
     url: "https://pofis.app",
     locale: "tr_TR",
@@ -17,11 +17,11 @@ export const content = {
   brand: {
     name: "Pofis",
     wordmark: "pofis",
-    tagline: "Mesaiye biraz Pofi.",
+    tagline: "Mesaiye biraz Pofi",
   },
   install: {
     platforms: [
-      { id: "macos", label: "macOS", command: "pofis=$(curl -fsSL https://pofis.app/install.sh) && /bin/bash -c \"$pofis\" --" },
+      { id: "macos", label: "macOS", command: "curl -fsSL https://pofis.app/install.sh | bash" },
       { id: "windows", label: "Windows PowerShell", command: "irm https://pofis.app/install.ps1 | iex" },
     ],
     copySuccessMessage: "Kopyalandı",
@@ -35,7 +35,8 @@ export const content = {
     creditUrl: "https://mertcreates.com",
   },
   theme: {
-    toggleAriaLabel: "Tema değiştir",
+    switchToLight: "Açık temaya geç",
+    switchToDark: "Koyu temaya geç",
   },
 } as const;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { Copy, Check } from "lucide-react";
 import { content } from "@/content";
 
@@ -12,8 +12,17 @@ export function InstallCard() {
   const [copyFailed, setCopyFailed] = useState(false);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const platform = platforms[active];
+  const copyRequest = useRef(0);
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    copyRequest.current += 1;
+    if (copyTimer.current !== null) clearTimeout(copyTimer.current);
+  }, []);
 
   function select(index: number) {
+    copyRequest.current += 1;
+    if (copyTimer.current !== null) clearTimeout(copyTimer.current);
     setActive(index);
     setCopied(false);
     setCopyFailed(false);
@@ -32,23 +41,35 @@ export function InstallCard() {
   }
 
   async function handleCopy() {
+    const request = ++copyRequest.current;
+    if (copyTimer.current !== null) clearTimeout(copyTimer.current);
+    setCopied(false);
     setCopyFailed(false);
+    let success = false;
     try {
       await navigator.clipboard.writeText(platform.command);
-      setCopied(true);
+      success = true;
     } catch {
+      if (request !== copyRequest.current) return;
+      const previousFocus = document.activeElement;
       const textArea = document.createElement("textarea");
       textArea.value = platform.command;
+      textArea.className = "sr-only";
       document.body.appendChild(textArea);
       textArea.select();
-      let success = false;
       try { success = document.execCommand("copy"); }
       catch { /* Tarayıcı kopyalamayı engellerse elle seçim mesajı gösterilir. */ }
-      finally { document.body.removeChild(textArea); }
-      setCopied(success);
-      setCopyFailed(!success);
+      finally {
+        document.body.removeChild(textArea);
+        if (previousFocus instanceof HTMLElement) previousFocus.focus();
+      }
     }
-    setTimeout(() => setCopied(false), 1600);
+    if (request !== copyRequest.current) return;
+    setCopied(success);
+    setCopyFailed(!success);
+    if (success) {
+      copyTimer.current = setTimeout(() => setCopied(false), 1600);
+    }
   }
 
   return (
@@ -80,7 +101,9 @@ export function InstallCard() {
       </div>
       ))}
       </div>
-      {copyFailed && <p className="hint-text" role="status">{content.install.copyErrorMessage}</p>}
+      <p className={copyFailed ? "hint-text" : "sr-only"} role="status" aria-atomic="true">
+        {copyFailed ? content.install.copyErrorMessage : copied ? content.install.copySuccessMessage : ""}
+      </p>
     </section>
   );
 }

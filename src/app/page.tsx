@@ -39,8 +39,7 @@ export default async function LandingPage() {
             />
           </div>
 
-          <h1 className="brand-title">{content.brand.name}</h1>
-          <p className="brand-slogan">{content.brand.tagline}</p>
+          <h1 className="brand-title">{content.brand.tagline}</h1>
 
           <InstallCard />
         </div>

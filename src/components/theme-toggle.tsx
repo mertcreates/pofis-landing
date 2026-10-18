@@ -17,17 +17,27 @@ export function ThemeToggle() {
       // Storage unavailable
     }
 
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
     if (saved === "light" || saved === "dark") {
-      setTheme(saved);
       document.documentElement.dataset.theme = saved;
-    } else {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      setTheme(prefersDark ? "dark" : "light");
     }
+
+    function syncTheme() {
+      const explicit = document.documentElement.dataset.theme;
+      setTheme(explicit === "light" || explicit === "dark"
+        ? explicit
+        : media.matches ? "dark" : "light");
+    }
+
+    syncTheme();
+    media.addEventListener("change", syncTheme);
+    return () => media.removeEventListener("change", syncTheme);
   }, []);
 
   function toggle() {
-    const next = theme === "dark" ? "light" : "dark";
+    const current = document.documentElement.dataset.theme
+      ?? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const next = current === "dark" ? "light" : "dark";
     setTheme(next);
     document.documentElement.dataset.theme = next;
     try {
@@ -41,7 +51,7 @@ export function ThemeToggle() {
     <button
       type="button"
       className="theme-toggle-btn"
-      aria-label={content.theme.toggleAriaLabel}
+      aria-label={theme === "dark" ? content.theme.switchToLight : content.theme.switchToDark}
       onClick={toggle}
     >
       {theme === "dark" ? (
