@@ -1,10 +1,18 @@
-import release from "../../public/releases/windows/latest.json";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { content } from "@/content";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { InstallCard } from "@/components/install-card";
 import { Footer } from "@/components/footer";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  let version: string | undefined;
+  try {
+    const raw = await readFile(join(process.cwd(), "public/releases/windows/latest.json"), "utf8");
+    version = JSON.parse(raw).version;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+  }
   return (
     <>
       <header className="page-header">
@@ -38,7 +46,7 @@ export default function LandingPage() {
         </div>
       </main>
 
-      <Footer version={release.version} />
+      <Footer version={version} />
     </>
   );
 }

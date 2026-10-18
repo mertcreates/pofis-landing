@@ -34,11 +34,27 @@ function Save-Download([Uri]$Uri, [string]$Target) {
 
 function Write-AtomicJson([string]$Path, $Value) {
     $temporary = "$Path.$([Guid]::NewGuid().ToString('N')).tmp"
-    [IO.File]::WriteAllText($temporary, ($Value | ConvertTo-Json -Depth 8), [Text.UTF8Encoding]::new($false))
     try {
-        if (Test-Path -LiteralPath $Path) { [IO.File]::Replace($temporary, $Path, [NullString]::Value) }
-        else { [IO.File]::Move($temporary, $Path) }
-    } catch { throw "Kurulum kaydı yenilenemedi ($([IO.Path]::GetFileName($Path))): $($_.Exception.Message)" }
+        [IO.File]::WriteAllText($temporary, ($Value | ConvertTo-Json -Depth 8), [Text.UTF8Encoding]::new($false))
+        for ($attempt = 0; $attempt -lt 5; $attempt++) {
+            try {
+                if (Test-Path -LiteralPath $Path) { [IO.File]::Replace($temporary, $Path, [NullString]::Value) }
+                else { [IO.File]::Move($temporary, $Path) }
+                return
+            } catch {
+                $cause = $_.Exception
+                while ($cause.InnerException) { $cause = $cause.InnerException }
+                $code = $cause.HResult -band 0xFFFF
+                # Sharing/lock violations and ERROR_UNABLE_TO_REMOVE_REPLACED can be transient.
+                if ($code -notin @(32, 33, 1175) -or $attempt -eq 4) {
+                    throw "Kurulum kaydı yenilenemedi ($([IO.Path]::GetFileName($Path)), Windows $code): $($cause.Message)"
+                }
+                Start-Sleep -Milliseconds 150
+            }
+        }
+    } finally {
+        if ([IO.File]::Exists($temporary)) { [IO.File]::Delete($temporary) }
+    }
 }
 
 function Assert-RequiredFiles([string]$Directory, [string]$Version) {
