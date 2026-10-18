@@ -170,7 +170,8 @@ function Register-Pofis([string]$Directory, [string]$Version) {
     $command = '"' + $powershell + '" -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "' + $uninstaller + '"'
     New-Item -Path $RegistryPath -Force | Out-Null
     foreach ($entry in @{
-        DisplayName = 'Pofis'; DisplayVersion = $Version; Publisher = 'Pofis';
+        DisplayName = 'Pofis'; DisplayVersion = $Version; Publisher = 'Mert Ercan';
+        URLInfoAbout = 'https://pofis.app';
         InstallLocation = $InstallRoot; DisplayIcon = (Join-Path $Directory 'Pofis.exe'); UninstallString = $command
     }.GetEnumerator()) {
         New-ItemProperty -LiteralPath $RegistryPath -Name $entry.Key -Value $entry.Value -PropertyType String -Force | Out-Null
@@ -228,7 +229,8 @@ try {
             Write-Host "Pofis güncel ($($previous.version))"
             Set-PofisShortcut (Join-Path $current 'Pofis.exe')
             Register-Pofis $current $previous.version
-            . (Join-Path $InstallRoot 'uninstall.ps1')
+            # Load the verified package's cleanup functions without executing a local script file.
+            . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $InstallRoot 'uninstall.ps1'))))
             Remove-PofisVersions $InstallRoot $previous.directory
             Start-VerifiedPofis (Join-Path $current 'Pofis.exe') $previous.version
             return
@@ -255,7 +257,7 @@ try {
     $stage = $null
     Set-PofisShortcut (Join-Path $target 'Pofis.exe')
     Register-Pofis $target $manifest.version
-    . (Join-Path $InstallRoot 'uninstall.ps1')
+    . ([scriptblock]::Create([IO.File]::ReadAllText((Join-Path $InstallRoot 'uninstall.ps1'))))
     Remove-PofisVersions $InstallRoot $directory
     Start-VerifiedPofis (Join-Path $target 'Pofis.exe') $manifest.version
     Write-Host "Kurulum tamamlandı · Pofis $($manifest.version)"
