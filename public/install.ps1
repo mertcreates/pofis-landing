@@ -111,8 +111,21 @@ function Get-InstalledProcess {
     })
 }
 
-function Confirm-PofisClose([string]$Message) {
-    try { $answer = Read-Host "$Message [e/H]" }
+function Confirm-PofisClose([string]$Message, [switch]$ForceClose) {
+    Write-Host ''
+    Write-Host '------------------------------------------------------------'
+    Write-Host '   /\_/\'
+    if ($ForceClose) { Write-Host '  ( o.o )   Pofis | Zorla kapatma onayı' -ForegroundColor Yellow }
+    else { Write-Host '  ( o.o )   Pofis | Uygulama açık' -ForegroundColor Cyan }
+    Write-Host '   > ^ <'
+    Write-Host '------------------------------------------------------------'
+    Write-Host $Message
+    Write-Host ''
+    if ($ForceClose) { Write-Host '  e = Uygulamayı zorla kapat ve güncellemeye devam et' }
+    else { Write-Host '  e = Uygulamayı kapat ve güncellemeye devam et' }
+    Write-Host '  h veya Enter = Güncellemeyi iptal et'
+    Write-Host ''
+    try { $answer = Read-Host 'Seçimin [e/H]' }
     catch { throw "Pofis açık. Onay alınamadı. Pofis'i kapatıp komutu yeniden çalıştırabilirsin." }
     return $answer -imatch '^(e|evet)$'
 }
@@ -128,7 +141,7 @@ function Wait-PofisClosed {
 
 function Close-PofisForUpdate {
     if (@(Get-InstalledProcess).Count -eq 0) { return }
-    if (-not (Confirm-PofisClose "Yeni sürüm hazır. Pofis'i kapatıp güncelleyelim mi?")) {
+    if (-not (Confirm-PofisClose 'Yeni sürüm hazır. Devam etmek için açık Pofis kapanacak.')) {
         throw 'Güncelleme iptal edildi. Kurulu sürüm aynı kaldı.'
     }
     foreach ($process in @(Get-InstalledProcess)) {
@@ -136,7 +149,7 @@ function Close-PofisForUpdate {
         if (-not $process.HasExited -and $process.MainWindowHandle -ne 0) { $null = $process.CloseMainWindow() }
     }
     if (Wait-PofisClosed) { return }
-    if (-not (Confirm-PofisClose 'Pofis henüz kapanmadı. Zorla kapatıp güncelleyelim mi? Kaydedilmemiş değişiklikler kaybolabilir.')) {
+    if (-not (Confirm-PofisClose "Pofis henüz kapanmadı. Zorla kapatılsın mı?`nKaydedilmemiş değişiklikler kaybolabilir." -ForceClose)) {
         throw "Güncelleme iptal edildi. Kurulu sürüm aynı kaldı. Pofis'i kapatıp yeniden deneyebilirsin."
     }
     # Enumerate again after consent and terminate individual processes, never all matching names.

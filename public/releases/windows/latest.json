@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "platform": "win32",
   "arch": "x64",
-  "version": "0.3.0",
-  "size": 189030760,
-  "sha256": "a1b6b7e8ae30efae2488eefd12a48e6d70d081626e4802b7a9598d21efb0ac39",
-  "url": "https://github.com/mertcreates/pofis-landing/releases/download/v0.3.0/Pofis-0.3.0-win32-x64.zip"
+  "version": "0.4.0",
+  "size": 189034406,
+  "sha256": "68f2f8bb085997fba3556872aced69dd3ead617a28b84baae327162e76e07aa4",
+  "url": "https://github.com/mertcreates/pofis-landing/releases/download/v0.4.0/Pofis-0.4.0-win32-x64.zip"
 }

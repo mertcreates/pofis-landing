@@ -93,7 +93,24 @@ confirm_close() {
   local answer
   # stdin can contain the installer itself (curl | bash); read consent from the terminal.
   [[ -t 1 ]] || { die "Pofis açık. Onay alınamadı. Pofis'i kapatıp komutu yeniden çalıştırabilirsin."; return 1; }
-  if ! { printf '%s [e/H] ' "$1" > /dev/tty; IFS= read -r answer < /dev/tty; } 2>/dev/null; then
+  if ! {
+    printf '\n%s\n' '------------------------------------------------------------' > /dev/tty
+    printf '%s\n' '   /\_/\' > /dev/tty
+    if [[ "${2:-}" == force ]]; then
+      printf '%s\n' '  ( o.o )   Pofis | Zorla kapatma onayı' > /dev/tty
+    else
+      printf '%s\n' '  ( o.o )   Pofis | Uygulama açık' > /dev/tty
+    fi
+    printf '%s\n' '   > ^ <' > /dev/tty
+    printf '%s\n%s\n\n' '------------------------------------------------------------' "$1" > /dev/tty
+    if [[ "${2:-}" == force ]]; then
+      printf '%s\n' '  e = Uygulamayı zorla kapat ve güncellemeye devam et' > /dev/tty
+    else
+      printf '%s\n' '  e = Uygulamayı kapat ve güncellemeye devam et' > /dev/tty
+    fi
+    printf '%s\n\n%s' '  h veya Enter = Güncellemeyi iptal et' 'Seçimin [e/H] ' > /dev/tty
+    IFS= read -r answer < /dev/tty
+  } 2>/dev/null; then
     die "Pofis açık. Onay alınamadı. Pofis'i kapatıp komutu yeniden çalıştırabilirsin."; return 1
   fi
   case "$answer" in e|E|evet|Evet|EVET) return 0 ;; *) return 1 ;; esac
@@ -136,12 +153,13 @@ close_for_update() {
   local pids
   pids="$(running_pids)" || { die 'Pofis’in kapalı olduğu doğrulanamadı. Kurulu sürüm aynı kaldı.'; return 1; }
   [[ -n "$pids" ]] || return 0
-  confirm_close "Yeni sürüm hazır. Pofis'i kapatıp güncelleyelim mi?" || {
+  confirm_close 'Yeni sürüm hazır. Devam etmek için açık Pofis kapanacak.' || {
     die 'Güncelleme iptal edildi. Kurulu sürüm aynı kaldı.'; return 1
   }
   request_close || printf 'Pofis normal yolla kapatılamadı.\n' >&2
   if wait_closed; then return 0; fi
-  confirm_close 'Pofis henüz kapanmadı. Zorla kapatıp güncelleyelim mi? Kaydedilmemiş değişiklikler kaybolabilir.' || {
+  confirm_close 'Pofis henüz kapanmadı. Zorla kapatılsın mı?
+Kaydedilmemiş değişiklikler kaybolabilir.' force || {
     die "Güncelleme iptal edildi. Kurulu sürüm aynı kaldı. Pofis'i kapatıp yeniden deneyebilirsin."; return 1
   }
   force_close || { die 'Pofis kapatılamadığı için güncelleme durdu. Kurulu sürüm aynı kaldı.'; return 1; }
