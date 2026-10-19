@@ -106,9 +106,44 @@ function Expand-VerifiedArchive([string]$Archive, [string]$Directory) {
 
 function Get-InstalledProcess {
     $prefix = (Join-Path $InstallRoot 'versions').TrimEnd('\') + '\'
-    @(Get-Process -ErrorAction SilentlyContinue | Where-Object {
+    @(Get-Process -ErrorAction Stop | Where-Object {
         try { $_.Path -and $_.Path.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase) } catch { $false }
     })
+}
+
+function Confirm-PofisClose([string]$Message) {
+    try { $answer = Read-Host "$Message [e/H]" }
+    catch { throw "Pofis açık. Onay alınamadı. Pofis'i kapatıp komutu yeniden çalıştırabilirsin." }
+    return $answer -imatch '^(e|evet)$'
+}
+
+function Wait-PofisClosed {
+    $deadline = [DateTime]::UtcNow.AddSeconds(10)
+    do {
+        if (@(Get-InstalledProcess).Count -eq 0) { return $true }
+        Start-Sleep -Milliseconds 200
+    } while ([DateTime]::UtcNow -lt $deadline)
+    return $false
+}
+
+function Close-PofisForUpdate {
+    if (@(Get-InstalledProcess).Count -eq 0) { return }
+    if (-not (Confirm-PofisClose "Yeni sürüm hazır. Pofis'i kapatıp güncelleyelim mi?")) {
+        throw 'Güncelleme iptal edildi. Kurulu sürüm aynı kaldı.'
+    }
+    foreach ($process in @(Get-InstalledProcess)) {
+        # Closing the window lets Electron stop its local server through before-quit.
+        if (-not $process.HasExited -and $process.MainWindowHandle -ne 0) { $null = $process.CloseMainWindow() }
+    }
+    if (Wait-PofisClosed) { return }
+    if (-not (Confirm-PofisClose 'Pofis henüz kapanmadı. Zorla kapatıp güncelleyelim mi? Kaydedilmemiş değişiklikler kaybolabilir.')) {
+        throw "Güncelleme iptal edildi. Kurulu sürüm aynı kaldı. Pofis'i kapatıp yeniden deneyebilirsin."
+    }
+    # Enumerate again after consent and terminate individual processes, never all matching names.
+    foreach ($process in @(Get-InstalledProcess)) {
+        if (-not $process.HasExited) { $process.Kill() }
+    }
+    if (-not (Wait-PofisClosed)) { throw 'Pofis kapanmadığı için güncelleme durdu. Kurulu sürüm aynı kaldı.' }
 }
 
 function Set-PofisShortcut([string]$Executable) {
@@ -249,7 +284,7 @@ try {
     [IO.Directory]::CreateDirectory($stage) | Out-Null
     Expand-VerifiedArchive $archive $stage
     Assert-RequiredFiles $stage $manifest.version
-    if (@(Get-InstalledProcess).Count -gt 0) { throw 'Pofis açık. Uygulamayı kapatıp aynı kurulum komutunu yeniden çalıştır.' }
+    Close-PofisForUpdate
     $target = $stage
     $state = @{ schemaVersion = 1; version = $manifest.version; sha256 = $manifest.sha256; directory = $directory
         installRoot = $InstallRoot; shortcutPath = $ShortcutPath; registryPath = $RegistryPath }

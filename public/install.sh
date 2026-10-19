@@ -89,6 +89,65 @@ running_pids() {
     '{pid=$1; sub(/^[[:space:]]*[0-9]+[[:space:]]+/, ""); if (index($0,app)==1) print pid}'
 }
 
+confirm_close() {
+  local answer
+  # stdin can contain the installer itself (curl | bash); read consent from the terminal.
+  [[ -t 1 ]] || { die "Pofis açık. Onay alınamadı. Pofis'i kapatıp komutu yeniden çalıştırabilirsin."; return 1; }
+  if ! { printf '%s [e/H] ' "$1" > /dev/tty; IFS= read -r answer < /dev/tty; } 2>/dev/null; then
+    die "Pofis açık. Onay alınamadı. Pofis'i kapatıp komutu yeniden çalıştırabilirsin."; return 1
+  fi
+  case "$answer" in e|E|evet|Evet|EVET) return 0 ;; *) return 1 ;; esac
+}
+
+wait_closed() {
+  local pids deadline=$((SECONDS + 10))
+  while true; do
+    pids="$(running_pids)" || return 1
+    [[ -n "$pids" ]] || return 0
+    (( SECONDS < deadline )) || return 1
+    /bin/sleep 0.2
+  done
+}
+
+request_close() {
+  # Pass the exact bundle path as data; a timed-out quit falls through to separate force consent.
+  /usr/bin/osascript - "$app_path" <<'APPLESCRIPT'
+on run argv
+  with timeout of 5 seconds
+    tell application (item 1 of argv) to quit
+  end timeout
+end run
+APPLESCRIPT
+}
+
+force_close() {
+  local pid executable pids
+  pids="$(running_pids)" || return 1
+  for pid in $pids; do
+    # Recheck the executable immediately before signalling; never kill by app/process name.
+    executable="$(/bin/ps -ww -p "$pid" -o comm=)" || continue
+    case "$executable" in "$app_path/Contents/"*) /bin/kill -KILL "$pid" || {
+      [[ -z "$(/bin/ps -p "$pid" -o pid=)" ]] || return 1
+    } ;; esac
+  done
+}
+
+close_for_update() {
+  local pids
+  pids="$(running_pids)" || { die 'Pofis’in kapalı olduğu doğrulanamadı. Kurulu sürüm aynı kaldı.'; return 1; }
+  [[ -n "$pids" ]] || return 0
+  confirm_close "Yeni sürüm hazır. Pofis'i kapatıp güncelleyelim mi?" || {
+    die 'Güncelleme iptal edildi. Kurulu sürüm aynı kaldı.'; return 1
+  }
+  request_close || printf 'Pofis normal yolla kapatılamadı.\n' >&2
+  if wait_closed; then return 0; fi
+  confirm_close 'Pofis henüz kapanmadı. Zorla kapatıp güncelleyelim mi? Kaydedilmemiş değişiklikler kaybolabilir.' || {
+    die "Güncelleme iptal edildi. Kurulu sürüm aynı kaldı. Pofis'i kapatıp yeniden deneyebilirsin."; return 1
+  }
+  force_close || { die 'Pofis kapatılamadığı için güncelleme durdu. Kurulu sürüm aynı kaldı.'; return 1; }
+  wait_closed || { die 'Pofis kapanmadığı için güncelleme durdu. Kurulu sürüm aynı kaldı.'; return 1; }
+}
+
 activate() {
   local backup="$stage/previous.app"
   switching=true
@@ -267,7 +326,7 @@ main() {
   /usr/bin/tar -xf "$work/package.zip" -C "$stage"
   assert_links "$stage/Pofis.app"
   assert_bundle "$stage/Pofis.app" "$version"
-  [[ -z "$(running_pids)" ]] || { die 'Pofis açık. Uygulamayı kapatıp aynı komutu yeniden çalıştır.'; return 1; }
+  close_for_update
   activate
   clear_staging_versions
   stage=''
