@@ -233,7 +233,7 @@ launch() {
     fi
     /bin/sleep 0.2
   done
-  die 'Pofis penceresi 45 saniye içinde hazır olmadı. Güvenlik uyarısı varsa Sistem Ayarları → Gizlilik ve Güvenlik bölümünü kontrol et.'
+  die 'Pofis penceresi 45 saniye içinde hazır olmadı. Güvenlik uyarısı varsa macOS güvenlik ayarlarını kontrol et.'
 }
 
 cleanup() {
