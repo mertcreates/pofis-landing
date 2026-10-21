@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "platform": "darwin",
   "arch": "x64",
-  "version": "0.5.0",
-  "size": 139699343,
-  "sha256": "eb6be3691d2d96757deed61f723d5f560a55810be517edcd785e574428a8361e",
-  "url": "https://github.com/mertcreates/pofis-landing/releases/download/v0.5.0/Pofis-0.5.0-darwin-x64.zip"
+  "version": "0.5.1",
+  "size": 139700906,
+  "sha256": "9a2b398e54370a7661375c727227113414698d5697459aec8ac3376094d4594b",
+  "url": "https://github.com/mertcreates/pofis-landing/releases/download/v0.5.1/Pofis-0.5.1-darwin-x64.zip"
 }
