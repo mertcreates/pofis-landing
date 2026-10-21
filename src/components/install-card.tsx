@@ -15,6 +15,12 @@ export function InstallCard() {
   const copyRequest = useRef(0);
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  useEffect(() => {
+    if (/Windows/i.test(navigator.userAgent)) {
+      setActive(platforms.findIndex(item => item.id === "windows"));
+    }
+  }, []);
+
   useEffect(() => () => {
     copyRequest.current += 1;
     if (copyTimer.current !== null) clearTimeout(copyTimer.current);
@@ -101,6 +107,7 @@ export function InstallCard() {
       </div>
       ))}
       </div>
+      <p className="install-instructions">{platform.instructions}</p>
       <p className={copyFailed ? "hint-text" : "sr-only"} role="status" aria-atomic="true">
         {copyFailed ? content.install.copyErrorMessage : copied ? content.install.copySuccessMessage : ""}
       </p>

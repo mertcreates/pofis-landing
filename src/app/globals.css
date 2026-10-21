@@ -166,6 +166,48 @@ button {
   color: var(--ink);
 }
 
+.brand-description {
+  margin-top: 12px;
+  color: var(--secondary);
+  font-size: 14px;
+  text-wrap: pretty;
+}
+
+.install-instructions {
+  margin-top: 12px;
+  color: var(--secondary);
+  font-size: 13px;
+  text-align: left;
+}
+
+.install-help {
+  margin-top: 24px;
+  text-align: left;
+  font-size: 13px;
+}
+
+.install-help summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 10px 0;
+  border-radius: var(--radius-control);
+  color: var(--secondary);
+  font-weight: 550;
+  cursor: pointer;
+  list-style: none;
+}
+
+.install-help summary::-webkit-details-marker { display: none; }
+.install-help summary:hover { color: var(--ink); }
+.install-help summary:focus-visible { box-shadow: inset 0 0 0 2px var(--accent); }
+.install-help[open] summary svg { transform: rotate(180deg); }
+.install-help dl { padding-top: 8px; }
+.install-help dl > div + div { margin-top: 18px; }
+.install-help dt { font-weight: 600; }
+.install-help dd { margin-top: 4px; color: var(--secondary); }
+
 /* Install box */
 .install-card {
   grid-area: 1 / 1;

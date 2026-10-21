@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { ChevronDown } from "lucide-react";
 import { content } from "@/content";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { InstallCard } from "@/components/install-card";
@@ -40,8 +41,24 @@ export default async function LandingPage() {
           </div>
 
           <h1 className="brand-title">{content.brand.tagline}</h1>
+          <p className="brand-description">{content.brand.description}</p>
 
           <InstallCard />
+
+          <details className="install-help">
+            <summary>
+              {content.installHelp.title}
+              <ChevronDown size={16} aria-hidden="true" />
+            </summary>
+            <dl>
+              {content.installHelp.items.map(item => (
+                <div key={item.question}>
+                  <dt>{item.question}</dt>
+                  <dd>{item.answer}</dd>
+                </div>
+              ))}
+            </dl>
+          </details>
         </div>
       </main>
 
