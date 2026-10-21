@@ -22,14 +22,23 @@ function Get-DownloadUri([string]$Value, [Uri]$Base) {
 }
 
 function Save-Download([Uri]$Uri, [string]$Target) {
+    $response = $null; $inputStream = $null; $outputStream = $null
     try {
-        $response = Invoke-WebRequest -UseBasicParsing -Uri $Uri.AbsoluteUri -OutFile $Target -PassThru -TimeoutSec 180
-        if ($response.BaseResponse.PSObject.Properties['ResponseUri']) {
-            $null = Get-DownloadUri $response.BaseResponse.ResponseUri.AbsoluteUri $null
-        } elseif ($response.BaseResponse.PSObject.Properties['RequestMessage']) {
-            $null = Get-DownloadUri $response.BaseResponse.RequestMessage.RequestUri.AbsoluteUri $null
-        }
+        # Stream the archive directly; Windows PowerShell's web cmdlet copies large responses through its pipeline.
+        $request = [Net.HttpWebRequest]::Create($Uri)
+        $request.Timeout = 180000
+        $request.ReadWriteTimeout = 180000
+        $response = $request.GetResponse()
+        $null = Get-DownloadUri $response.ResponseUri.AbsoluteUri $null
+        $inputStream = $response.GetResponseStream()
+        $outputStream = [IO.File]::Open($Target, [IO.FileMode]::CreateNew)
+        $inputStream.CopyTo($outputStream)
     } catch { throw "İndirme tamamlanamadı: $($Uri.AbsolutePath)" }
+    finally {
+        if ($outputStream) { $outputStream.Dispose() }
+        if ($inputStream) { $inputStream.Dispose() }
+        if ($response) { $response.Dispose() }
+    }
 }
 
 function Write-AtomicJson([string]$Path, $Value) {
@@ -87,12 +96,25 @@ function Expand-VerifiedArchive([string]$Archive, [string]$Directory) {
     $zip = [IO.Compression.ZipFile]::OpenRead($Archive)
     $prefix = [IO.Path]::GetFullPath($Directory).TrimEnd('\') + '\'
     try {
+        $files = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
         foreach ($entry in $zip.Entries) {
             if ($entry.FullName.Contains(':') -or (($entry.ExternalAttributes -shr 16) -band 0xF000) -eq 0xA000) {
                 throw 'Pakette desteklenmeyen dosya yolu var.'
             }
             $target = [IO.Path]::GetFullPath([IO.Path]::Combine($Directory, $entry.FullName))
             if (-not $target.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) { throw 'Paket kurulum dizininin dışına yazmaya çalışıyor.' }
+            if ($entry.Name -and -not $files.Add($target)) { throw 'Pakette aynı dosya yolu birden fazla kez bulunuyor.' }
+            if ($entry.Name -and [IO.File]::Exists(('\\?\' + $target))) { throw 'Paket açılacak dizinde aynı dosya bulunuyor.' }
+        }
+        # Validate the whole archive before handing it to Windows' native extractor.
+        $tar = Join-Path $env:SystemRoot 'System32\tar.exe'
+        if ([IO.File]::Exists($tar)) {
+            & $tar -x -k -f $Archive -C $Directory
+            if ($LASTEXITCODE -ne 0) { throw 'Paket açılamadı. Kurulum komutunu yeniden çalıştırabilirsin.' }
+            return
+        }
+        foreach ($entry in $zip.Entries) {
+            $target = [IO.Path]::GetFullPath([IO.Path]::Combine($Directory, $entry.FullName))
             # Normalize and check containment before applying the Windows long-path prefix.
             $target = '\\?\' + $target
             if (-not $entry.Name) { [IO.Directory]::CreateDirectory($target) | Out-Null; continue }
