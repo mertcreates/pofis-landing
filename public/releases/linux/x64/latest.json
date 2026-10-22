@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "platform": "linux",
+  "arch": "x64",
+  "version": "0.7.0",
+  "size": 138517321,
+  "sha256": "6367a263e61c1e6b13b8804140f77972aefd32c6a8745e879241d945f00fd3a4",
+  "url": "https://github.com/mertcreates/pofis-landing/releases/download/v0.7.0/Pofis-0.7.0-linux-x64.tar.gz"
+}

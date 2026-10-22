@@ -71,9 +71,15 @@ function Assert-RequiredFiles([string]$Directory, [string]$Version) {
         'resources\app\electron\main.cjs', 'resources\app\electron\server-entry.cjs',
         'resources\app\electron\server.cjs', 'resources\app\electron\startup.cjs', 'resources\app\electron\platform.cjs',
         'resources\app\electron\uninstall.ps1',
-        'resources\app\server\.next\BUILD_ID', 'resources\app\server\server.js',
-        'resources\app\server\node_modules\next\package.json', 'release.json')) {
+        'resources\app\server\server.js', 'release.json')) {
         if (-not [IO.File]::Exists((Join-Path $Directory $relative))) { throw "Paket eksik: $relative" }
+    }
+    # Current Windows bundles seal the server and dependencies in one ASAR file.
+    # Keep validating older unpacked installations during same-version reuse.
+    if (-not [IO.File]::Exists((Join-Path $Directory 'resources\app\server.asar'))) {
+        foreach ($relative in @('resources\app\server\.next\BUILD_ID', 'resources\app\server\node_modules\next\package.json')) {
+            if (-not [IO.File]::Exists((Join-Path $Directory $relative))) { throw "Paket eksik: $relative" }
+        }
     }
     $release = Get-Content -LiteralPath (Join-Path $Directory 'release.json') -Raw -Encoding UTF8 | ConvertFrom-Json
     $app = Get-Content -LiteralPath (Join-Path $Directory 'resources\app\package.json') -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -166,8 +172,15 @@ function Close-PofisForUpdate {
     if (-not (Confirm-PofisClose 'Yeni sürüm hazır. Devam etmek için açık Pofis kapanacak.')) {
         throw 'Güncelleme iptal edildi. Kurulu sürüm aynı kaldı.'
     }
+    $quitRequested = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     foreach ($process in @(Get-InstalledProcess)) {
-        # Closing the window lets Electron stop its local server through before-quit.
+        # New versions hide on close. Ask the exact executable/profile to quit before the legacy window fallback.
+        if ($process.PSObject.Properties['Path'] -and $process.Path -and
+            [IO.Path]::GetFileName($process.Path) -ieq 'Pofis.exe' -and
+            (Test-Path -LiteralPath $process.Path) -and $quitRequested.Add($process.Path)) {
+            $null = Start-Process -FilePath $process.Path -WindowStyle Hidden `
+                -ArgumentList @('--pofis-quit', ('--user-data-dir="' + $UserDataDir + '"')) -PassThru
+        }
         if (-not $process.HasExited -and $process.MainWindowHandle -ne 0) { $null = $process.CloseMainWindow() }
     }
     if (Wait-PofisClosed) { return }
@@ -179,6 +192,49 @@ function Close-PofisForUpdate {
         if (-not $process.HasExited) { $process.Kill() }
     }
     if (-not (Wait-PofisClosed)) { throw 'Pofis kapanmadığı için güncelleme durdu. Kurulu sürüm aynı kaldı.' }
+}
+
+function Set-PofisShortcutIdentity([string]$Path) {
+    if (-not ('Pofis.ShortcutIdentity' -as [type])) {
+        Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+namespace Pofis {
+    public static class ShortcutIdentity {
+        [StructLayout(LayoutKind.Sequential)] struct PropertyKey { public Guid format; public uint id; }
+        [StructLayout(LayoutKind.Explicit, Size=24)] struct PropVariant {
+            [FieldOffset(0)] public ushort type;
+            [FieldOffset(8)] public IntPtr value;
+        }
+        [ComImport, Guid("886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        interface IPropertyStore {
+            [PreserveSig] int GetCount(out uint count);
+            [PreserveSig] int GetAt(uint index, out PropertyKey key);
+            [PreserveSig] int GetValue(ref PropertyKey key, out PropVariant value);
+            [PreserveSig] int SetValue(ref PropertyKey key, ref PropVariant value);
+            [PreserveSig] int Commit();
+        }
+        [DllImport("shell32.dll", CharSet=CharSet.Unicode, PreserveSig=true)]
+        static extern int SHGetPropertyStoreFromParsingName(string path, IntPtr context, uint flags, ref Guid iid, out IPropertyStore store);
+        public static void Set(string path) {
+            Guid iid = typeof(IPropertyStore).GUID;
+            IPropertyStore store;
+            Marshal.ThrowExceptionForHR(SHGetPropertyStoreFromParsingName(path, IntPtr.Zero, 2, ref iid, out store));
+            var key = new PropertyKey { format = new Guid("9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3"), id = 5 };
+            var value = new PropVariant { type = 31, value = Marshal.StringToCoTaskMemUni("app.pofis.client") };
+            try {
+                Marshal.ThrowExceptionForHR(store.SetValue(ref key, ref value));
+                Marshal.ThrowExceptionForHR(store.Commit());
+            } finally {
+                Marshal.FreeCoTaskMem(value.value);
+                Marshal.ReleaseComObject(store);
+            }
+        }
+    }
+}
+'@
+    }
+    [Pofis.ShortcutIdentity]::Set($Path)
 }
 
 function Set-PofisShortcut([string]$Executable) {
@@ -193,6 +249,7 @@ function Set-PofisShortcut([string]$Executable) {
         $shortcut.IconLocation = "$Executable,0"
         $shortcut.Description = 'Pofis'
         $shortcut.Save()
+        Set-PofisShortcutIdentity $temporary
         Move-Item -LiteralPath $temporary -Destination $ShortcutPath -Force
     } finally { [Runtime.InteropServices.Marshal]::ReleaseComObject($shell) | Out-Null }
 }
