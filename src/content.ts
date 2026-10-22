@@ -23,7 +23,7 @@ export const content = {
   install: {
     platforms: [
       {
-        id: "macos", label: "macOS",
+        id: "unix", label: "macOS / Ubuntu",
         command: "curl -fsSL https://pofis.app/install.sh | bash",
         instructions: "Terminal’i aç, komutu yapıştır ve Enter’a bas.",
       },

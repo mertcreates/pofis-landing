@@ -11,6 +11,7 @@ async function verify(root = resolve(__dirname, ".."), output = false) {
     ["windows", "win32", "x64"],
     ["macos/arm64", "darwin", "arm64"],
     ["macos/x64", "darwin", "x64"],
+    ["linux/x64", "linux", "x64"],
   ]) {
     let raw;
     try {
@@ -20,7 +21,7 @@ async function verify(root = resolve(__dirname, ".."), output = false) {
       throw error;
     }
     const manifest = JSON.parse(raw);
-    const name = "Pofis-" + manifest.version + "-" + platform + "-" + arch + ".zip";
+    const name = "Pofis-" + manifest.version + "-" + platform + "-" + arch + (platform === "linux" ? ".tar.gz" : ".zip");
     if (manifest.schemaVersion !== 1 || manifest.platform !== platform || manifest.arch !== arch ||
         !/^\d+\.\d+\.\d+$/.test(manifest.version) || !Number.isSafeInteger(manifest.size) || manifest.size <= 0 ||
         !/^[a-f0-9]{64}$/.test(manifest.sha256) ||
@@ -28,6 +29,12 @@ async function verify(root = resolve(__dirname, ".."), output = false) {
       throw new Error(target + " manifesti veya GitHub paket adresi geçersiz. Ana projede desktop:site çalıştır.");
     }
     versions.add(manifest.version);
+    if (platform === "linux") {
+      const linuxInstaller = await readFile(join(directory, "install.sh"), "utf8");
+      if (!linuxInstaller.startsWith("#!/bin/bash\n") || !linuxInstaller.includes("https://pofis.app/releases/linux/x64/latest.json")) {
+        throw new Error("Linux kurulum betiğinin içeriği geçersiz.");
+      }
+    }
   }
   if (versions.size > 1) throw new Error("Platformların sürümleri eşleşmiyor.");
   const installer = await readFile(join(directory, "install.ps1"), "utf8");
@@ -40,7 +47,7 @@ async function verify(root = resolve(__dirname, ".."), output = false) {
   async function inspect(path) {
     for (const entry of await readdir(path, { withFileTypes: true })) {
       const file = join(path, entry.name);
-      if (entry.isSymbolicLink() || /^(?:\.env.*|\.git|node_modules)$/.test(entry.name) || /\.(?:zip|exe|asar)$/.test(entry.name)) {
+      if (entry.isSymbolicLink() || /^(?:\.env.*|\.git|node_modules)$/.test(entry.name) || /\.(?:zip|tar\.gz|exe|asar)$/.test(entry.name)) {
         throw new Error("Site çıktısına dağıtım paketi, bağlantı veya özel dosya konulmamalı: " + file);
       }
       if (entry.isDirectory()) await inspect(file);
