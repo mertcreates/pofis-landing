@@ -58,7 +58,7 @@ export const content = {
     brand: "Pofis",
     tagline: "Mesaiye biraz Pofi",
     creditLabel: "mertcreates.",
-    creditUrl: "https://mertcreates.com",
+    creditUrl: "https://mertercan.com",
   },
   notFound: {
     title: "Sayfa bulunamadı",
