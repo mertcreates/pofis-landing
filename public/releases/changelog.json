@@ -1,0 +1,139 @@
+[
+  {
+    "version": "1.0.0",
+    "publishedOn": "2026-10-24",
+    "features": [
+      "Pofi Mini eklendi. Menü çubuğu veya sistem tepsisinden bugünkü mesaiye, hedef çıkışa ve haftalık özete ulaşabilirsin.",
+      "Pofi Mini’nin içeriği ve boyutu günün mesai durumuna uyum sağlıyor. Süreler saniyesine kadar gösteriliyor.",
+      "Pofi Mini’yi sabitleyerek açık tutabilir, başlığından sürükleyerek taşıyabilirsin. Mac’te Command+Shift+P, Windows ve Linux’ta Ctrl+Shift+P kısayoluyla ulaşabilirsin. Mac’te Dock ve Pencere menülerinden de açabilirsin.",
+      "macOS menü çubuğunda hedefe kalan veya hedefi aşan süreyi görebilirsin. Süre gösterimini kapatma ve Pofis’i oturum açılışında başlatma seçenekleri eklendi.",
+      "Mesai planına giriş veya çıkış saati seçme eklendi. Seçtiğin saate ve günün çalışma süresine göre diğer saat hesaplanıyor; seçimlerin gün ve hafta için saklanıyor.",
+      "Haftalık cetvelde izinli günler de görünüyor. Bir günü seçerek raporuna veya planına geçebilir, günün akışındaki kayıt uyarısından ilgili raporu açabilirsin. Süreler ve hedef çıkış daha belirgin gösteriliyor.",
+      "Sürüm geçmişi eklendi. Ekranın altındaki sürüm numarasına tıklayarak yenilikleri ve düzeltmeleri görebilirsin. Henüz okumadığın sürümün yanında küçük bir işaret beliriyor.",
+      "Pofi’nin odasındaki “Çalışırken” notlarına pencere nöbeti, mola ve mesai arkadaşlığı anları eklendi."
+    ],
+    "fixes": [
+      "Geçmiş bir haftayı incelerken mesai planını açtığında seçtiğin hafta korunuyor.",
+      "Bildirim ayarlarını değiştirdiğinde aynı günün sonraki hatırlatmaları da yeni ayarlarını kullanıyor.",
+      "macOS bildirimlerinde uygulama simgesinin iki kez görünmesi düzeltildi.",
+      "Pofi panelindeki mesajların noktalama işaretleri ve yemek yorumlarındaki anlatım tutarsızlıkları düzeltildi."
+    ]
+  },
+  {
+    "version": "0.7.0",
+    "publishedOn": "2026-10-22",
+    "features": [
+      "Hedef çıkış yaklaşırken ve hedef saatinde masaüstü veya Telegram hatırlatması alabilirsin. Nereden ve kaç dakika önce haber almak istediğini seçebilir, deneme bildirimi gönderebilirsin.",
+      "Ubuntu 24.04 LTS x64 için tek komutla kurulum ve güncelleme eklendi.",
+      "Mesaim, mesai planı, yemek menüsü ve Pofi’nin odasında yazılar, boşluklar ve açık/koyu tema renkleri yenilendi."
+    ],
+    "fixes": [
+      "Haftalık plandaki beklenen toplam düzeltildi. Bu toplam, çalıştığın süreyle kalan günlerin planını birlikte gösteriyor.",
+      "Sürelerin dakikaya yuvarlanmasından kaynaklanan eksik veya fazla gösterimler düzeltildi.",
+      "Raporda gelecek günler “Henüz gelmedi” olarak gösteriliyor; bu günlerde kayıt ayrıntısı açılmıyor."
+    ]
+  },
+  {
+    "version": "0.6.0",
+    "publishedOn": "2026-10-21",
+    "features": [
+      "Yeni sürüm bildirimi uygulama içine taşındı. Güncelleme bilgisine menüden ve giriş ekranından yeniden ulaşabilirsin.",
+      "Mesai planına “8:13” veya “8 sa 13 dk” gibi süreler doğrudan yazılabiliyor.",
+      "Bir günün planını kilitleyerek süresini koruyabilirsin. Kalan süre diğer günlere dağıtılırken kilitli gün değişmiyor.",
+      "Haftalık hedefe kalan süreyi günlere eşit dağıtma veya son mesai gününe ekleme seçenekleri eklendi."
+    ],
+    "fixes": [
+      "Tekrarlanan turnike kayıtları artık tek başına mesai hesabını durdurmuyor; uyarı olarak gösteriliyor.",
+      "Önceki kayıtlarda giriş eksik olsa da sonraki girişin geçerliyse devam eden mesain hesaplanıyor.",
+      "Kayıt uyarıları rapor ayrıntısına taşındı. Turnike listesi boş olduğunda da sorunun açıklaması görülebiliyor."
+    ]
+  },
+  {
+    "version": "0.5.2",
+    "publishedOn": "2026-10-21",
+    "fixes": [
+      "Turnike kaydı bulunan geçmiş günlerin planı korumaya alındı. Kalan süreyi dağıtırken veya planı sıfırlarken bu günlerin süresi değişmiyor."
+    ]
+  },
+  {
+    "version": "0.5.1",
+    "publishedOn": "2026-10-21",
+    "fixes": [
+      "Pofi’nin notlarında ve yemek yorumlarında birbiriyle uyuşmayan olaylar ve ifadeler düzeltildi."
+    ]
+  },
+  {
+    "version": "0.5.0",
+    "publishedOn": "2026-10-21",
+    "features": [
+      "Yemek menüsü eklendi. PDKS hesabındaki menüyü gün seçerek görebilirsin; menü tarihleri İstanbul saatine göre belirleniyor.",
+      "Yemek menüsüne Pofi’nin yorumları, albümüne yemek fotoğrafı eklendi.",
+      "Haftalık hedefi aştığında kalan günlerin planı korunuyor. Süreleri azaltmak istersen planı kendin düzenleyebilirsin."
+    ],
+    "fixes": [
+      "Haftalık planının toplamı ile varsayılan haftalık hedefin ayrı gösterilmesi sağlandı."
+    ]
+  },
+  {
+    "version": "0.4.2",
+    "publishedOn": "2026-10-20",
+    "fixes": [
+      "Günün önceki saatlerinde tekrarlanan turnike kayıtlarının devam eden mesaiyi ve hedef çıkışı gizlemesi düzeltildi.",
+      "Intel Mac için uygulama paketlerindeki uyumluluk sorunu giderildi."
+    ]
+  },
+  {
+    "version": "0.4.1",
+    "publishedOn": "2026-10-20",
+    "features": [
+      "macOS 12 Monterey desteği eklendi."
+    ],
+    "fixes": [
+      "PDKS’ye bağlanırken e-posta adresini de yazabilirsin. Adresin kullanıcı adı bölümü kullanılıyor."
+    ]
+  },
+  {
+    "version": "0.4.0",
+    "publishedOn": "2026-10-19",
+    "features": [
+      "Bağlantı formunda şifreni gösterip gizleyebilirsin.",
+      "Açık ve koyu görünüm arasında geçiş için güneş/ay düğmesi eklendi.",
+      "Masaüstü uygulamasındaki geliştirici bağlantısı varsayılan tarayıcında açılıyor."
+    ],
+    "fixes": [
+      "Bazı PDKS hesaplarının bağlanamamasına yol açan sorun düzeltildi. Aynı hesabın Pofi notları da tutarlı biçimde seçiliyor.",
+      "Güncelleme sırasında uygulamayı kapatma ve yeniden deneme adımları netleştirildi."
+    ]
+  },
+  {
+    "version": "0.3.0",
+    "publishedOn": "2026-10-19",
+    "features": [
+      "Geçmiş haftaların toplamı ve grafiği, kayıtlara göre çalıştığın süreyi öne çıkaracak şekilde yenilendi.",
+      "Tekrarlanan, eşleşmeyen veya okunamayan turnike kayıtlarında sorunun nedeni ve saati gösteriliyor.",
+      "Uygulama içi demoya geçmiş hafta görünümü eklendi."
+    ]
+  },
+  {
+    "version": "0.2.0",
+    "publishedOn": "2026-10-19",
+    "features": [
+      "Pofis açılışta yeni sürüm olup olmadığını kontrol ediyor. Güncelleme bildiriminden kurulum komutunu kopyalayabilirsin.",
+      "Güncelleme sırasında Pofis’i kapatmak için onayın isteniyor. Uygulama kapanmazsa zorla kapatmak için ayrıca onay alınıyor."
+    ]
+  },
+  {
+    "version": "0.1.0",
+    "publishedOn": "2026-10-18",
+    "features": [
+      "Pofis’in ilk masaüstü sürümü Windows x64, Apple Silicon ve Intel Mac için yayımlandı. Ek yazılım kurmadan uygulama simgesinden açabilirsin.",
+      "Tek komutla kurulum, güncelleme ve kaldırma eklendi. Güncellemelerde ayarların ve oturum bilgilerin korunuyor.",
+      "Kendi PDKS hesabınla günlük ve haftalık giriş-çıkış kayıtlarını, çalıştığın süreyi ve hedefine kalan ya da hedefini aşan süreyi takip edebilirsin.",
+      "Devam eden mesainin süresini ve hedef çıkışını günün akışında görebilirsin.",
+      "Varsayılan ve haftaya özel mesai planları eklendi. Günlerin süresini düzenleyebilir, kalan süreyi henüz tamamlanmamış mesai günlerine dağıtabilirsin.",
+      "Günleri izinli işaretleyerek haftalık hedefini azaltabilirsin.",
+      "Pofi’nin mesaiye göre değişen hâlleri, odası, albümü, günlük notları ve özel gün notları eklendi.",
+      "PDKS’ye bağlanmadan mesai takibini ve plan düzenlemeyi deneyebileceğin, hata durumlarını da görebileceğin demo eklendi."
+    ]
+  }
+]
