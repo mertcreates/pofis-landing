@@ -438,7 +438,8 @@ def download(url, destination, expected=None):
         fail("İndirme HTTPS olmalı; yerel testte yalnız loopback HTTP kullanılabilir.")
     limit = expected["size"] if expected else 65536
     digest, size = hashlib.sha256(), 0
-    with urllib.request.build_opener(Downloads).open(url, timeout=30) as response, open(destination, "xb") as output:
+    request = urllib.request.Request(url, headers={"User-Agent": "Pofis-Installer/1.1"})
+    with urllib.request.build_opener(Downloads).open(request, timeout=30) as response, open(destination, "xb") as output:
         while True:
             block = response.read(1024 * 1024)
             if not block:
