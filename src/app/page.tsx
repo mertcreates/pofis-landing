@@ -24,7 +24,19 @@ export default async function LandingPage() {
             <span className="brand-dot">.</span>
           </span>
         </a>
-        <ThemeToggle />
+        <div className="page-header-actions">
+          <a
+            className="github-link"
+            href={content.links.sourceCode.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={content.links.sourceCode.label}
+            title={content.links.sourceCode.label}
+          >
+            <span className="github-mark" aria-hidden="true" />
+          </a>
+          <ThemeToggle />
+        </div>
       </header>
 
       <main className="hero-container">

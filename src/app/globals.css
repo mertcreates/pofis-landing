@@ -94,6 +94,46 @@ button {
   width: 100%;
 }
 
+.page-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-control);
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.github-link:hover {
+  color: var(--ink);
+  background: var(--surface-subtle);
+}
+
+.github-mark {
+  display: block;
+  width: 18.375px;
+  height: 18px;
+  background: url("/github-invertocat-black.svg") center / contain no-repeat;
+}
+
+:root[data-theme='dark'] .github-mark {
+  background-image: url("/github-invertocat-white.svg");
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .github-mark {
+    background-image: url("/github-invertocat-white.svg");
+  }
+}
+
 .wordmark {
   display: inline-flex;
   align-items: center;

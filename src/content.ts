@@ -20,6 +20,12 @@ export const content = {
     tagline: "Mesaiye biraz Pofi",
     description: "Günlük mesaini takip et, haftanı planla. Pofi de gününe eşlik etsin.",
   },
+  links: {
+    sourceCode: {
+      url: "https://github.com/mertcreates/Pofis",
+      label: "Pofis’in kaynak kodu GitHub’da",
+    },
+  },
   install: {
     platforms: [
       {
