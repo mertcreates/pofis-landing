@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "platform": "linux",
   "arch": "x64",
-  "version": "1.1.0",
-  "size": 138677908,
-  "sha256": "485a82249fc8ca4c2b480cb5f66d5dbf87e2db978baa964eec27548eb92dc4a3",
-  "url": "https://github.com/mertcreates/pofis-landing/releases/download/v1.1.0/Pofis-1.1.0-linux-x64.tar.gz"
+  "version": "1.2.0",
+  "size": 138677114,
+  "sha256": "c1006a06e7a4dd8c977a1326b2cb5f6c314365a86fcc500991eac16fbf6aade5",
+  "url": "https://github.com/mertcreates/pofis-landing/releases/download/v1.2.0/Pofis-1.2.0-linux-x64.tar.gz"
 }

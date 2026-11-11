@@ -1,5 +1,18 @@
 [
   {
+    "version": "1.2.0",
+    "publishedOn": "2026-11-11",
+    "features": [
+      "Haftalık toplamda önceki günlerin açığını, bu açığı bugün kapatmak için kaçta çıkman gerektiğini ve açık kapandıktan sonra ne kadar fazla çalıştığını görebilirsin.",
+      "Mesai planındaki Planlama sekmesinde giriş ve çıkış saatlerini deneyebilir, haftalık hedefe kalan süreyi günlere dağıtabilirsin. Bu haftanın kayıtlarıyla başlayabilir veya çalışma düzeninden bir Yeni hafta taslağı oluşturup daha sonra sürdürebilirsin.",
+      "Bu haftanın günlük süreleri de haftalık grafikte görünüyor. Giriş-çıkış raporu sayfanın altında tam genişlikte yer alıyor."
+    ],
+    "fixes": [
+      "Giriş-çıkış raporunda izinli günler tarih ve “İzinli” etiketiyle gösteriliyor.",
+      "Bugünün planı kayıtlı ilk giriş saatini kullanıyor. Gereken süreyi değiştirdiğinde çıkış saati güncelleniyor."
+    ]
+  },
+  {
     "version": "1.1.0",
     "publishedOn": "2026-10-29",
     "features": [
