@@ -1,5 +1,13 @@
 [
   {
+    "version": "1.2.1",
+    "publishedOn": "2026-11-13",
+    "fixes": [
+      "Açığı kapatma saati hesaplanırken haftalık hedef ve güncel plan birlikte değerlendiriliyor. Planda karşılanan açığın yeniden eklenmesi düzeltildi.",
+      "Açığı kapattıktan sonraki fazla mesai daha anlaşılır bir ifadeyle gösteriliyor."
+    ]
+  },
+  {
     "version": "1.2.0",
     "publishedOn": "2026-11-11",
     "features": [
